@@ -8,10 +8,9 @@ import argparse
 import model as model
 #import loss
 import logging
-from glob import glob
 #from pc_util import  normalize_point_cloud, farthest_point_sample, group_points
 from datetime import datetime
-from tqdm import tqdm, trange
+from tqdm import tqdm 
 from torch.optim.lr_scheduler import CosineAnnealingLR
 from pytorch3d.loss import chamfer_distance
 from tensorboardX import SummaryWriter 

@@ -1,17 +1,12 @@
-from cmath import isnan
-import os
-from turtle import forward
 import torch
 import torch.nn as nn
 import torch.nn.init as init
 import numpy as np
-from torch.autograd import Variable, grad
 import torch.nn.functional as F
 #import poisson_disc as pd
 import pointnet2_ops.pointnet2_utils as utils
 import pytorch3d.ops
 import pytorch3d
-import torch.autograd as ag
   
 
 def knn(x, k):
@@ -164,20 +159,20 @@ class PUGeo(nn.Module):
 
 
         # [1, u, v , u*u, u*v, v*v]     
-        uv_vector=torch.concat((torch.ones_like(u),u,v,u*u,u*v,v*v),dim=-1)        #(B,N,U,6)  
+        uv_vector=torch.cat((torch.ones_like(u),u,v,u*u,u*v,v*v),dim=-1)        #(B,N,U,6)  
 
         # [0, 1, 0, 2*u, v, 0]      grad u
-        uv_vector_grad_u=torch.concat((torch.zeros_like(u),torch.ones_like(u),torch.zeros_like(u),2*u,v,torch.zeros_like(u)),dim=-1)
+        uv_vector_grad_u=torch.cat((torch.zeros_like(u),torch.ones_like(u),torch.zeros_like(u),2*u,v,torch.zeros_like(u)),dim=-1)
 
         # [0, 0, 1, 0, u, 2*v]      grad v
-        uv_vector_grad_v=torch.concat((torch.zeros_like(u),torch.zeros_like(u),torch.ones_like(u),torch.zeros_like(u),u,2*v),dim=-1)
+        uv_vector_grad_v=torch.cat((torch.zeros_like(u),torch.zeros_like(u),torch.ones_like(u),torch.zeros_like(u),u,2*v),dim=-1)
 
         # [0, 0, 0, 2, 0, 0]        grad uu
-        #uv_vector_grad_uu=torch.concat((torch.zeros_like(u),torch.zeros_like(u),torch.zeros_like(u),2*torch.ones_like(u),torch.zeros_like(u),torch.zeros_like(u)),dim=-1)
+        #uv_vector_grad_uu=torch.cat((torch.zeros_like(u),torch.zeros_like(u),torch.zeros_like(u),2*torch.ones_like(u),torch.zeros_like(u),torch.zeros_like(u)),dim=-1)
         # [0, 0, 0, 0, 1, 0]        grad uv
-        #uv_vector_grad_uv=torch.concat((torch.zeros_like(u),torch.zeros_like(u),torch.zeros_like(u),torch.zeros_like(u),torch.ones_like(u),torch.zeros_like(u)),dim=-1)
+        #uv_vector_grad_uv=torch.cat((torch.zeros_like(u),torch.zeros_like(u),torch.zeros_like(u),torch.zeros_like(u),torch.ones_like(u),torch.zeros_like(u)),dim=-1)
         # [0,0,0,0,0,2]
-        #uv_vector_grad_vv=torch.concat((torch.zeros_like(u),torch.zeros_like(u),torch.zeros_like(u),torch.zeros_like(u),torch.zeros_like(u),2*torch.ones_like(u)),dim=-1)
+        #uv_vector_grad_vv=torch.cat((torch.zeros_like(u),torch.zeros_like(u),torch.zeros_like(u),torch.zeros_like(u),torch.zeros_like(u),2*torch.ones_like(u)),dim=-1)
 
         coefficient=self.uv_2order_coefficient_conv(concat).transpose(2,1).reshape(batch_size,num_point,6,3)        #(B,6*3,N)->(B,N,6*3)->(B,N,6,3)
 
@@ -245,13 +240,13 @@ class UDF(nn.Module):
 
         oriented_normal=torch.sgn(signed_dist)*query_knn_normal         #(B,M,K,3)
 
-        concat_vector1=torch.concat((query_knn_pc_local,oriented_normal),dim=3).permute(0,3,1,2)     #(B,M,K,6)->(B,6,M,K)
+        concat_vector1=torch.cat((query_knn_pc_local,oriented_normal),dim=3).permute(0,3,1,2)     #(B,M,K,6)->(B,6,M,K)
 
         feature=self.patch_feature_net(concat_vector1)          #(B,128,M,K)
 
         patch_feature=torch.max(feature,dim=3,keepdim=True)[0]     #(B,128,M,1)
 
-        concat_vector2=torch.concat((concat_vector1,dist.permute(0,3,1,2),feature,patch_feature.repeat(1,1,1,self.K)),dim=1)   #(B,6+1+128+128,M,K)
+        concat_vector2=torch.cat((concat_vector1,dist.permute(0,3,1,2),feature,patch_feature.repeat(1,1,1,self.K)),dim=1)   #(B,6+1+128+128,M,K)
 
         weight1=self.attention_net(concat_vector2).squeeze(1)      #(B,1,M,K)->(B,M,K)
         weight1=F.softmax(weight1,dim=2)

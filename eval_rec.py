@@ -1,4 +1,3 @@
-import sys
 import os
 os.environ['CUDA_VISIBLE_DEVICES']='0'
 import numpy as np
@@ -6,15 +5,12 @@ import pytorch3d
 import pytorch3d.ops
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 from model import PUGeo,UDF
 import trimesh
 import argparse
 import open3d as o3d
-from multiprocessing import Pool
-import multiprocessing
 import numba
-import time
+import pdb
 
 triTable =[
             [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],

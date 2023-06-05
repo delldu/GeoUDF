@@ -7,9 +7,8 @@ from shapenet_small_dataset import mesh_pc_dataset
 import numpy as np
 import argparse
 from model import PUGeo,UDF
-from glob import glob
 from datetime import datetime
-from tqdm import tqdm, trange
+from tqdm import tqdm
 from torch.optim.lr_scheduler import CosineAnnealingLR
 from pytorch3d.loss import chamfer_distance
 from tensorboardX import SummaryWriter 
