@@ -591,6 +591,7 @@ if __name__ == "__main__":
     grids_udf = grids_udf_flatten.reshape(N, N, N)
     grids_udf_grad = grids_udf_grad_flatten.reshape(N, N, N, 3)
 
+    # E-MC ?
     vs, fs = custom_marching_cube(grids_coords, grids_udf, grids_udf_grad, voxel_size, N)
 
     if arg.scale:
